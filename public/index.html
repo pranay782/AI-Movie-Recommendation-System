@@ -9,173 +9,156 @@
 </head>
 <body>
 
-  <!-- AUTH MODAL -->
-  <div id="auth-modal" class="modal-overlay active">
+  <!-- ═══ AUTH MODAL ═══════════════════════════════════════════════════════ -->
+  <div id="auth-modal" class="modal-overlay show">
     <div class="modal-box">
       <div class="modal-logo">🎬 CineMatch</div>
+
       <div class="auth-tabs">
-        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
-        <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Register</button>
+        <button class="auth-tab selected" id="tab-login"    onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab"          id="tab-register" onclick="switchTab('register')">Register</button>
       </div>
 
-      <!-- Login Form -->
-      <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
+      <!-- Login -->
+      <form id="login-form" method="post" action="#" onsubmit="handleLogin(event); return false;">
         <div class="form-group">
           <label>Email</label>
-          <input type="email" id="login-email" placeholder="you@example.com" required />
+          <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email" required />
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input type="password" id="login-password" placeholder="••••••••" required />
+          <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" required />
         </div>
         <div id="login-error" class="form-error"></div>
-        <button type="submit" class="btn-primary btn-full">Sign In</button>
+        <button type="button" id="login-btn" class="btn-primary w-full" onclick="handleLogin(event)">Sign In</button>
       </form>
 
-      <!-- Register Form -->
-      <form id="register-form" class="auth-form hidden" onsubmit="handleRegister(event)">
+      <!-- Register -->
+      <form id="register-form" class="d-none" method="post" action="#" onsubmit="handleRegister(event); return false;">
         <div class="form-group">
           <label>Username</label>
-          <input type="text" id="reg-username" placeholder="cooluser123" required />
+          <input type="text" id="reg-username" placeholder="cooluser123" autocomplete="username" required />
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" id="reg-email" placeholder="you@example.com" required />
+          <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email" required />
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input type="password" id="reg-password" placeholder="min 6 characters" required />
+          <input type="password" id="reg-password" placeholder="min 6 characters" autocomplete="new-password" required />
         </div>
         <div class="form-group">
-          <label>Favorite Genres <span class="muted">(select at least 1)</span></label>
+          <label>Favorite Genres <span class="text-muted">(pick any)</span></label>
           <div id="genre-picker" class="genre-picker"></div>
         </div>
         <div id="register-error" class="form-error"></div>
-        <button type="submit" class="btn-primary btn-full">Create Account</button>
+        <button type="button" id="register-btn" class="btn-primary w-full" onclick="handleRegister(event)">Create Account</button>
       </form>
     </div>
   </div>
 
-  <!-- MOVIE DETAIL MODAL -->
-  <div id="movie-modal" class="modal-overlay" onclick="closeMovieModal(event)">
+  <!-- ═══ MOVIE DETAIL MODAL ══════════════════════════════════════════════ -->
+  <div id="movie-modal" class="modal-overlay" onclick="onBackdropClick(event)">
     <div class="movie-modal-box" id="movie-modal-box">
-      <button class="modal-close" onclick="closeMovieModal()">✕</button>
-      <div id="movie-modal-content">Loading...</div>
+      <button class="modal-close-btn" onclick="closeMovieModal()">✕</button>
+      <div id="movie-modal-content">
+        <div class="spinner-wrap"><div class="spinner"></div></div>
+      </div>
     </div>
   </div>
 
-  <!-- NAVBAR -->
+  <!-- ═══ NAVBAR ══════════════════════════════════════════════════════════ -->
   <nav class="navbar">
-    <div class="nav-brand" onclick="showSection('home')">🎬 CineMatch</div>
+    <div class="nav-brand" onclick="goHome()">🎬 CineMatch</div>
     <div class="nav-search">
-      <input type="text" id="search-input" placeholder="Search movies..." oninput="handleSearchInput(event)" />
-      <button onclick="triggerSearch()">🔍</button>
+      <input type="text" id="search-input" placeholder="Search movies…" oninput="onSearchInput(event)" onkeydown="onSearchKey(event)" />
+      <button class="search-btn" onclick="triggerSearch()">🔍</button>
     </div>
     <div class="nav-links">
-      <button class="nav-btn" onclick="showSection('home')">Home</button>
+      <button class="nav-btn" onclick="goHome()">Home</button>
       <button class="nav-btn" onclick="showSection('recommended')">For You</button>
       <button class="nav-btn" onclick="showSection('watchlist')">Watchlist</button>
       <button class="nav-btn" onclick="showSection('watched')">Watched</button>
-      <div class="nav-user" id="nav-user">
-        <span id="nav-username"></span>
-        <button class="btn-logout" onclick="logout()">Logout</button>
-      </div>
+      <span id="nav-username" class="nav-user-name"></span>
+      <button id="logout-btn" class="btn-logout d-none" onclick="logout()">Logout</button>
     </div>
   </nav>
 
-  <!-- MAIN CONTENT -->
+  <!-- ═══ MAIN ════════════════════════════════════════════════════════════ -->
   <main class="main-content">
 
-    <!-- HOME SECTION -->
-    <section id="section-home" class="section active">
+    <!-- HOME -->
+    <section id="section-home" class="section show">
       <div id="hero-banner" class="hero-banner">
-        <div class="hero-info" id="hero-info"></div>
+        <div id="hero-info" class="hero-info"></div>
       </div>
       <div class="container">
-        <div class="section-header">
-          <h2>🔥 Trending This Week</h2>
-        </div>
+        <div class="section-header"><h2>🔥 Trending This Week</h2></div>
         <div class="movie-grid" id="trending-grid"></div>
 
-        <div class="section-header">
-          <h2>⭐ Top Rated</h2>
-        </div>
+        <div class="section-header"><h2>⭐ Top Rated</h2></div>
         <div class="movie-grid" id="toprated-grid"></div>
 
-        <div class="section-header">
-          <h2>🎭 Browse by Genre</h2>
-        </div>
+        <div class="section-header"><h2>🎭 Browse by Genre</h2></div>
         <div id="genre-filter" class="genre-filter"></div>
         <div class="movie-grid" id="genre-grid"></div>
       </div>
     </section>
 
-    <!-- RECOMMENDED SECTION -->
+    <!-- RECOMMENDED -->
     <section id="section-recommended" class="section">
       <div class="container">
-        <div class="section-header">
-          <h2>🎯 Recommended For You</h2>
-          <p class="section-sub">Based on your favorite genres</p>
-        </div>
+        <div class="section-header"><h2>🎯 Recommended For You</h2><p class="text-muted">Based on your favourite genres</p></div>
         <div class="movie-grid" id="recommended-grid"></div>
       </div>
     </section>
 
-    <!-- WATCHLIST SECTION -->
+    <!-- WATCHLIST -->
     <section id="section-watchlist" class="section">
       <div class="container">
-        <div class="section-header">
-          <h2>📋 My Watchlist</h2>
-        </div>
+        <div class="section-header"><h2>📋 My Watchlist</h2></div>
         <div class="movie-grid" id="watchlist-grid"></div>
-        <div id="watchlist-empty" class="empty-state hidden">
+        <div id="watchlist-empty" class="empty-state d-none">
           <div class="empty-icon">📽️</div>
           <p>Your watchlist is empty. Start adding movies!</p>
         </div>
       </div>
     </section>
 
-    <!-- WATCHED SECTION -->
+    <!-- WATCHED -->
     <section id="section-watched" class="section">
       <div class="container">
-        <div class="section-header">
-          <h2>✅ Watched Movies</h2>
-        </div>
+        <div class="section-header"><h2>✅ Watched Movies</h2></div>
         <div class="movie-grid" id="watched-grid"></div>
-        <div id="watched-empty" class="empty-state hidden">
+        <div id="watched-empty" class="empty-state d-none">
           <div class="empty-icon">🎬</div>
-          <p>No watched movies yet. Start watching!</p>
+          <p>No watched movies yet. Start rating!</p>
         </div>
       </div>
     </section>
 
-    <!-- SEARCH RESULTS SECTION -->
+    <!-- SEARCH -->
     <section id="section-search" class="section">
       <div class="container">
         <div class="section-header">
           <h2>🔍 Search Results</h2>
-          <span id="search-query-label" class="muted"></span>
+          <span id="search-label" class="text-muted"></span>
         </div>
         <div class="movie-grid" id="search-grid"></div>
-        <div id="search-empty" class="empty-state hidden">
+        <div id="search-empty" class="empty-state d-none">
           <div class="empty-icon">🔎</div>
-          <p>No movies found. Try a different search term.</p>
+          <p>No movies found. Try a different term.</p>
         </div>
         <div class="load-more-wrap">
-          <button id="load-more-search" class="btn-secondary hidden" onclick="loadMoreSearch()">Load More</button>
+          <button id="load-more-btn" class="btn-secondary d-none" onclick="loadMoreSearch()">Load More</button>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- TOAST NOTIFICATION -->
-  <div id="toast" class="toast hidden"></div>
-
-  <!-- LOADER -->
-  <div id="page-loader" class="page-loader hidden">
-    <div class="spinner"></div>
-  </div>
+  <!-- TOAST -->
+  <div id="toast" class="toast d-none"></div>
 
   <script src="app.js"></script>
 </body>
