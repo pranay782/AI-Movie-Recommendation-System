@@ -3,8 +3,9 @@
    All IDs match index.html exactly. No .active/.hidden — uses .show/.d-none.
 ═══════════════════════════════════════════════════════════════════════════ */
 
-// Works from any origin: Live Server (127.0.0.1:5500), Express (localhost:5500), etc.
-const API_BASE = `${window.location.protocol}//${window.location.hostname}:5000/api`;
+// Relative path works everywhere: local Express, Render, any cloud host.
+// Never hardcode a port — on Render only 80/443 are exposed publicly.
+const API_BASE = '/api';
 const IMG_BASE  = 'https://image.tmdb.org/t/p';
 
 /* ─── STATE ──────────────────────────────────────────────────────────────── */
